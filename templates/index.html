@@ -10,7 +10,11 @@
     </head>
 
     <body>
-
+        <div class="bg-blobs">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
         <div class="container">
             <div class="header">
                 <h1>ASCII ART GENERATOR</h1>
@@ -55,17 +59,58 @@
                 </div>
 
                 <div class="result-section">
-                    <h2 class="section-title">Your ASCII Art</h2>
-                    <div class="ascii-output">
-
-                        <div class="ascii-result">{{.Result}}</div>
-
+                    <div class="section-header">
+                        <h2 class="section-title">Your ASCII Art</h2>
+                        <button id="copy-btn" class="copy-btn" title="Copy to Clipboard">
+                            <span class="icon">📋</span>
+                            <span class="text">Copy</span>
+                        </button>
                     </div>
-
+                    <div class="ascii-output">
+                        <div id="ascii-result" class="ascii-result">{{.Result}}</div>
+                    </div>
                 </div>
             </div>
 
             <div id="notification" class="notification"></div>
+
+            <script>
+                const copyBtn = document.getElementById('copy-btn');
+                const asciiResult = document.getElementById('ascii-result');
+                const notification = document.getElementById('notification');
+
+                if (copyBtn) {
+                    copyBtn.addEventListener('click', () => {
+                        const text = asciiResult.innerText;
+                        if (!text || text.trim() === "") return;
+
+                        navigator.clipboard.writeText(text).then(() => {
+                          
+                            const originalText = copyBtn.querySelector('.text').innerText;
+                            copyBtn.querySelector('.text').innerText = 'Copied!';
+                            copyBtn.classList.add('copied');
+                            
+                            showNotification('ASCII Art copied to clipboard!');
+
+                            setTimeout(() => {
+                                copyBtn.querySelector('.text').innerText = originalText;
+                                copyBtn.classList.remove('copied');
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                            showNotification('Failed to copy!');
+                        });
+                    });
+                }
+
+                function showNotification(message) {
+                    notification.innerText = message;
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            </script>
 
         </body>
 
