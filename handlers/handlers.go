@@ -78,7 +78,11 @@ func AsciiArtHandler(w http.ResponseWriter, r *http.Request) {
 
 	result, err := GenerateASCIIArt(text, banner)
 	if err != nil {
-		RenderWithError(w, "Error generating ASCII art:", 500)
+		if err.Error() == "invalid ascii character" {
+			RenderWithError(w, "Bad request: invalid ascii character", 400)
+			return
+		}
+		RenderWithError(w, "Internal server error", 500)
 		return
 	}
 
